@@ -26,8 +26,8 @@ exports.delete = async(req, res) =>{
 }
 exports.update = async(req, res) =>{
     try{
-        const ip = req.body;
-        await Message.findOneAndUpdate({ip}, {})
+        const {ip, message} = req.body;
+        await Message.findOneAndUpdate({ip}, {message})
     }catch(e){
         
     }
