@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const user = mongoose.Schema({
-    time: {
+    ip: {
         type: Number,
         required: [true, "set id to remeber you"]
     }
