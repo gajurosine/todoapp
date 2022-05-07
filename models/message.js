@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const message = mongoose.Schema({
-    ip: {
-        type: String,
+    user: {
+        type: Number,
         required: true
     },
     message: {
