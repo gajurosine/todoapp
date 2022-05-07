@@ -1,3 +1,8 @@
+const User = require('../models/user')
 exports.login = async(req, res) =>{
-    console.log('login')
+    let id;
+    $.getJSON('http://ip.jsontest.com/', function(data) {
+    id = JSON.stringify(data, null, 2)
+   });
+   
 }
