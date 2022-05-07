@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
+const {ObjectId} = require('mongoose').Types;
 const user = mongoose.Schema({
     ip: {
-        type: Number,
+        type: String,
         required: [true, "set id to remeber you"]
     }
 })

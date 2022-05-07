@@ -11,10 +11,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 const url = "mongodb://localhost:27017/todo";
-const User = require('./models/user')
-mongoose.connect(url, {isUnifiedTopology: true})
-.then(()=>{console.log('conection established')})
-.catch(err => console.log(err));
+const User = require('./models/user');
+const PORT = process.env.PORT || 5000;
+const mongo = require('mongodb').MongoClient;
+mongo.connect(url, ()=>{console.log('connected')})
 const io = new Server(server, {
     cors: {
         origin: "http://localhost:3000",
@@ -32,9 +32,9 @@ io.on('connection', (socket)=>{
     socket.on('join-room', (room)=>{
         socket.join(room);
         let todos = get(room);
-        io.to(room).emit('todo', todos)
+        io.to(room).emit('todo', todos);
     })
-    socket.on('createTodo', (todo)=>{
+    socket.on('createTodo', async(todo)=>{
         const {message, ip} = todo;
         if(!message || message === "" ) {
             return res.status(400).json({err: "Enter your message"});
@@ -46,8 +46,8 @@ io.on('connection', (socket)=>{
         month = month.length > 1 ? month : "0" + month;
         const year = dates.getFullYear().toString();
         const time = `${date}/${month}/${year}`;
-        const todo = await Message.create({ip, message, date: time});
-        io.to(ip).emit("todo", todo)
+        const hello = await Message.create({ip, message, date: time});
+        io.to(ip).emit("todo", hello)
     } )
 })
-server.listen(PORT, ()=>{console.log(`http://localhost:${port}`)});
+server.listen(PORT, ()=>{console.log(`http://localhost:${PORT}`)});
