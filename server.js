@@ -6,6 +6,7 @@ const http = require('http');
 const server = http.createServer(app);
 const {Server} = require('socket.io');
 const login = require('./routes/user');
+const Message = require('./models/message')
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -20,5 +21,33 @@ const io = new Server(server, {
         methods: ["GET", "POST", "PUT", "DELETE"]
     }
 })
-app.use('/', login)
+app.use('/', login);
+const get = (room) =>{
+    const sortTod = Message.aggregate([
+        {$match: {ip: room}}
+    ])
+    return sortTod
+}
+io.on('connection', (socket)=>{
+    socket.on('join-room', (room)=>{
+        socket.join(room);
+        let todos = get(room);
+        io.to(room).emit('todo', todos)
+    })
+    socket.on('createTodo', (todo)=>{
+        const {message, ip} = todo;
+        if(!message || message === "" ) {
+            return res.status(400).json({err: "Enter your message"});
+        }
+        const dates = new Date(Date.now());
+        var date = dates.getDate().toString();
+        date = date.length > 1 ? date : "0" + date;
+        var month = dates.getMonth().toString();
+        month = month.length > 1 ? month : "0" + month;
+        const year = dates.getFullYear().toString();
+        const time = `${date}/${month}/${year}`;
+        const todo = await Message.create({ip, message, date: time});
+        io.to(ip).emit("todo", todo)
+    } )
+})
 server.listen(PORT, ()=>{console.log(`http://localhost:${port}`)});

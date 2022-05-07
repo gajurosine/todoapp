@@ -1,6 +1,8 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+const Message = require('../models/message')
 exports.login = async(req, res) =>{
+    try{
     let id;
     $.getJSON('http://ip.jsontest.com/', function(data) {
     id = JSON.stringify(data, null, 2)
@@ -10,11 +12,23 @@ exports.login = async(req, res) =>{
        const token = jwt.sign({id: user.ip}, secret, {expiresIn: "10d"})
        res.status(201).json({token});
    }
+}catch(e){
+
 }
-exports.createTo = async(req, res) => {
-    const {message} = req.body;
-    if(!message || message === "" ) {
-        return res.status(400).json({err: "Enter your message"});
+}
+exports.delete = async(req, res) =>{
+    try{
+        const ip = req.body;
+        await Message.findOneAndDelete({ip})
+    }catch(e){
+        
     }
-    const to = require('')
+}
+exports.update = async(req, res) =>{
+    try{
+        const ip = req.body;
+        await Message.findOneAndUpdate({ip}, {})
+    }catch(e){
+        
+    }
 }
